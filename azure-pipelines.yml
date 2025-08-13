@@ -1,19 +1,28 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+- main   # Runs when code is pushed to the main branch
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'  # Azure Pipelines agent
+
+variables:
+  SOURCE_FILE: 'documents/transfer/sample.txt'  # Change to your source file path
+  DEST_FOLDER: 'destination-folder'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- checkout: self
 
+# Step 1: Create destination folder if it doesn't exist
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    mkdir -p $(DEST_FOLDER)
+  displayName: 'Create destination folder'
+
+# Step 2: Copy file from source to destination
+- script: |
+    cp $(SOURCE_FILE) $(DEST_FOLDER)/
+    echo "✅ File copied from $(SOURCE_FILE) to $(DEST_FOLDER)"
+  displayName: 'Copy file'
+
+# Step 3: List files in destination folder (verification)
+- script: |
+    ls -l $(DEST_FOLDER)
+  displayName: 'List destination folder contents'
